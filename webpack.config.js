@@ -26,17 +26,15 @@ var config = {
     module: {
         loaders: [
             {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/
-            },
-            {
                 test: /\.(less)$/,
-                loader: ExtractTextPlugin.extract(['css-loader','less-loader'])
-            },
-            {
-                test: /\.(css)$/,
-                loader: ExtractTextPlugin.extract(['css-loader'])
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        {loader: 'css-loader'},
+                        {loader: 'px2rem-loader', options: {remUnit: 37.5, remPrecision: 8}},
+                        {loader: 'less-loader'},
+                        {loader: 'postcss-loader', options:{plugin: (loader) => {require('autoprefixer')()}}}]
+                })
             },
             {
                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -48,6 +46,7 @@ var config = {
             }
         ]
     },
+    devtool: '#source-map',
     plugins: [
         //html模板的处理
         new HtmlWebpackPlugin(getHtmlTemplate('index', '登录')),
